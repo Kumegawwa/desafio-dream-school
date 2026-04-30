@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  # 1. SERVIÇO DO BANCO DE DADOS (POSTGRESQL)
+  postgres:
+    image: postgres:15-alpine
+    container_name: scholar_postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=senha_super_segura
+      - POSTGRES_DB=scholar_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. SERVIÇO DE AUTOMAÇÃO (n8n)
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: scholar_n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+      - TZ=America/Sao_Paulo
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+# 3. VOLUMES (Para não perder os dados quando desligar o PC)
+volumes:
+  postgres_data:
+  n8n_data:
