@@ -7,10 +7,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 1. Conexão com o PostgreSQL (Os mesmos dados que colocamos no docker-compose)
+// 1. Conexão com o PostgreSQL
 const pool = new Pool({
   user: 'admin',
-  host: '127.0.0.1', // <-- Mudei aqui!
+  host: '127.0.0.1',
   database: 'scholar_db',
   password: 'senha_super_segura',
   port: 5432,
@@ -41,10 +41,6 @@ app.post('/leads', async (req, res) => {
       [nome, email, curso_desejado, nivel_ingles]
     );
     const novoLead = result.rows[0];
-
-    // O código do Webhook (n8n) ficará aqui. Vamos ativar ele na próxima etapa!
-    // const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook-test/SUA-URL-AQUI';
-    // await axios.post(N8N_WEBHOOK_URL, novoLead);
 
     res.status(201).json({ message: 'Lead criado com sucesso!', lead: novoLead });
   } catch (error) {
