@@ -57,7 +57,7 @@ app.post('/leads', async (req, res) => {
 
     // 2. Dispara o alerta para o n8n (Webhook)
     try {
-      await fetch('http://localhost:5678/webhook-test/novo-lead', {
+      await fetch('http://localhost:5678/webhook/novo-lead', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

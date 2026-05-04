@@ -3,7 +3,7 @@
 Este projeto é uma solução Full-Stack desenvolvida para o desafio técnico da The Dream School. Ele consiste em uma Landing Page de captação de leads, uma API robusta e uma automação de notificações via webhook.
 
 ## 🛠️ Tecnologias Utilizadas
-*   **Frontend:** Next.js, React, Tailwind CSS (Em construção)
+*   **Frontend:** Next.js, React, Tailwind CSS
 *   **Backend:** Node.js, Express, TypeScript
 *   **Banco de Dados:** PostgreSQL
 *   **Automação:** n8n
@@ -22,7 +22,7 @@ Na raiz do projeto, execute:
 \`\`\`bash
 docker compose up -d
 \`\`\`
-*O n8n estará disponível em `http://localhost:5678`*
+*O n8n estará disponível em `http://localhost:5678` e o PostgreSQL na porta `5432`.*
 
 ### 2. Iniciar a API (Backend)
 \`\`\`bash
@@ -30,9 +30,19 @@ cd backend
 npm install
 npm run dev
 \`\`\`
-*A API estará rodando na porta 3001.*
+*A API estará rodando na porta `3001`.*
+
+### 3. Iniciar o Frontend (Landing Page)
+\`\`\`bash
+cd frontend
+npm install
+npm run dev
+\`\`\`
+*Acesse a Landing Page em `http://localhost:3000`.*
 
 ## 📸 Screenshots
-[Docker](./docs/docker.png)
-[Terminal](./docs/terminal.png.png)
-[PowerShell](./docs/powershell.png)
+![Docker](./docs/docker.png)
+![Terminal](./docs/terminal.png)
+![PowerShell](./docs/powershell.png)
+![Webhook](./docs/Webhook.png)
+![Formulario](./docs/Formulario.png)
