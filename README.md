@@ -44,5 +44,6 @@ npm run dev
 ![Docker](./docs/docker.png)
 ![Terminal](./docs/terminal.png)
 ![PowerShell](./docs/powershell.png)
-![Webhook](./docs/Webhook.png)
-![Formulario](./docs/Formulario.png)
+![Formulário](./docs/Formulario.png)
+![Webhook Configuração](./docs/Webhook.png)
+![Automação Final](./docs/automacao.png)
