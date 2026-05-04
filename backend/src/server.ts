@@ -17,35 +17,64 @@ const pool = new Pool({
 });
 
 // 2. Cria a tabela automaticamente quando a API ligar
-pool.query(`
-  CREATE TABLE IF NOT EXISTS leads (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    curso_desejado VARCHAR(50),
-    nivel_ingles VARCHAR(20),
-    status VARCHAR(20) DEFAULT 'Novo',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  );
-`).then(() => console.log('✅ Tabela "leads" pronta no banco de dados!'))
-  .catch(err => console.error('❌ Erro ao criar tabela:', err));
+// Empacotado em uma função async para resolver o erro do TypeScript
+async function iniciarBanco() {
+  try {
+    await pool.query('DROP TABLE IF EXISTS leads;');
+
+    // Adicionado o created_at para a rota GET funcionar corretamente
+    await pool.query(`
+      CREATE TABLE leads (
+        id SERIAL PRIMARY KEY,
+        nome VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        telefone VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    console.log('✅ Tabela "leads" recriada com sucesso no banco de dados!');
+  } catch (error) {
+    console.error('⚠️ Erro ao recriar a tabela:', error);
+  }
+}
+
+// Executa a função na inicialização
+iniciarBanco();
 
 // 3. ROTA POST: Recebe os dados do Frontend (Landing Page)
 app.post('/leads', async (req, res) => {
-  const { nome, email, curso_desejado, nivel_ingles } = req.body;
+  const { nome, email, telefone } = req.body;
 
   try {
-    // Salva no Banco de Dados
+    // 1. Salva no Banco de Dados
     const result = await pool.query(
-      'INSERT INTO leads (nome, email, curso_desejado, nivel_ingles) VALUES ($1, $2, $3, $4) RETURNING *',
-      [nome, email, curso_desejado, nivel_ingles]
+      'INSERT INTO leads (nome, email, telefone) VALUES ($1, $2, $3) RETURNING *',
+      [nome, email, telefone]
     );
+
     const novoLead = result.rows[0];
 
+    // 2. Dispara o alerta para o n8n (Webhook)
+    try {
+      await fetch('http://localhost:5678/webhook-test/novo-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(novoLead), 
+      });
+      console.log('✅ Webhook disparado com sucesso para o n8n!');
+    } catch (webhookError) {
+      console.error('⚠️ Erro ao avisar o n8n:', webhookError);
+    }
+
+    // 3. Responde para o Frontend que deu tudo certo
     res.status(201).json({ message: 'Lead criado com sucesso!', lead: novoLead });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erro ao criar lead. Talvez o email já exista.' });
+    console.error('Erro ao criar lead:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
 
